@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ReceiptsApp.Api</RootNamespace>
+    <UserSecretsId>9f2f6b4f-7e2e-4f1a-8d2a-receipts-app-api</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+    <PackageReference Include="log4net" Version="3.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\aspire\MyApp.ServiceDefaults\MyApp.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\ReceiptsApp.Application\ReceiptsApp.Application.csproj" />
+    <ProjectReference Include="..\ReceiptsApp.Infrastructure\ReceiptsApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\ReceiptsApp.Infrastructure.Receipts\ReceiptsApp.Infrastructure.Receipts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
