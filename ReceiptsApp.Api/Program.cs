@@ -1,5 +1,5 @@
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using ReceiptsApp.Api.Extensions;
 using ReceiptsApp.Api.Middleware;
 using ReceiptsApp.Application.DependencyInjection;
@@ -11,8 +11,8 @@ using ReceiptsApp.Infrastructure.Receipts.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Aspire configuration
-builder.AddServiceDefaults();
+//Aspire configuration - disabled for Docker build
+// builder.AddServiceDefaults();
 
 // ── Logging ──────────────────────────────────────────────────────────────
 // Replace the default console provider with log4net, configured by an
@@ -37,24 +37,37 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<UsersDbContext>(name: "users-db")
+    .AddDbContextCheck<ReceiptsDbContext>(name: "receipts-db")
+    .AddRedis(builder.Configuration.GetConnectionString("Redis")!, name: "redis");
+
 var app = builder.Build();
 
 // ── Database migration on startup (dev convenience) ───────────────────────
 // In production, run `dotnet ef database update` per context as a deploy
 // step instead of migrating automatically on boot.
-//if (app.Environment.IsDevelopment())
-//{
-//    using var scope = app.Services.CreateScope();
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        await usersDb.Database.MigrateAsync();
+    }
+    catch (SqlException ex)
+    {
+        logger.LogError(ex, "Database migration failed - SQL connectivity issue. Connection string (no password): {Conn}",
+            builder.Configuration.GetConnectionString("UsersDb"));
+    }
 
-//    var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-//    //await usersDb.Database.MigrateAsync();
+    var receiptsDb = scope.ServiceProvider.GetRequiredService<ReceiptsDbContext>();
+    await receiptsDb.Database.MigrateAsync();
 
-//    var receiptsDb = scope.ServiceProvider.GetRequiredService<ReceiptsDbContext>();
-//    //await receiptsDb.Database.MigrateAsync();
-
-//    var seeder = scope.ServiceProvider.GetRequiredService<ReceiptsDatabaseSeeder>();
-//    await seeder.SeedAsync();
-//}
+    var seeder = scope.ServiceProvider.GetRequiredService<ReceiptsDatabaseSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -68,10 +81,11 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Aspire configuration
-app.MapDefaultEndpoints();
+// Aspire configuration - disabled for Docker build
+// app.MapDefaultEndpoints();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
 

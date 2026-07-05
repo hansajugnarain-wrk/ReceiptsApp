@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="../ReceiptsApp.Application/ReceiptsApp.Application.csproj" />
+  <Project Path="../ReceiptsApp.Domain/ReceiptsApp.Domain.csproj" />
+  <Project Path="../ReceiptsApp.Infrastructure.Receipts/ReceiptsApp.Infrastructure.Receipts.csproj" />
+  <Project Path="../ReceiptsApp.Infrastructure/ReceiptsApp.Infrastructure.csproj" />
+  <Project Path="ReceiptsApp.Api.csproj" />
+</Solution>
