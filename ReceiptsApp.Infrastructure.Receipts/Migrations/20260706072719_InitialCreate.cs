@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ReceiptsApp.Infrastructure.Receipts.Persistence.Migrations
+namespace ReceiptsApp.Infrastructure.Receipts.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -70,9 +70,9 @@ namespace ReceiptsApp.Infrastructure.Receipts.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Receipts_UserId_PurchasedAtUtc",
-                table: "Receipts",
-                columns: new[] { "UserId", "PurchasedAtUtc" });
+                name: "IX_ReceiptItems_ReceiptId",
+                table: "ReceiptItems",
+                column: "ReceiptId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Receipts_MarketId",
@@ -80,17 +80,22 @@ namespace ReceiptsApp.Infrastructure.Receipts.Persistence.Migrations
                 column: "MarketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReceiptItems_ReceiptId",
-                table: "ReceiptItems",
-                column: "ReceiptId");
+                name: "IX_Receipts_UserId_PurchasedAtUtc",
+                table: "Receipts",
+                columns: new[] { "UserId", "PurchasedAtUtc" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "ReceiptItems");
-            migrationBuilder.DropTable(name: "Receipts");
-            migrationBuilder.DropTable(name: "Markets");
+            migrationBuilder.DropTable(
+                name: "ReceiptItems");
+
+            migrationBuilder.DropTable(
+                name: "Receipts");
+
+            migrationBuilder.DropTable(
+                name: "Markets");
         }
     }
 }

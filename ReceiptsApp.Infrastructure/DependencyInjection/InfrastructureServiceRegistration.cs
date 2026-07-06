@@ -20,13 +20,7 @@ public static class InfrastructureServiceRegistration
     public static IServiceCollection AddInfrastructureServices(
         this IServiceCollection services, IConfiguration configuration)
     {
-        // Users/Auth persistence — SQL Server, can point at the same Docker
-        // container as Receipts or a fully separate instance.
-        services.AddDbContext<UsersDbContext>(options =>
-            options.UseSqlServer(
-                configuration.GetConnectionString("UsersDatabase"),
-                sql => sql.EnableRetryOnFailure(maxRetryCount: 3)));
-
+        
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -52,6 +46,11 @@ public static class InfrastructureServiceRegistration
         }
 
         services.AddScoped<ICacheService, RedisCacheService>();
+
+        services.AddDbContextFactory<UsersDbContext>(options =>
+           options.UseSqlServer(
+               configuration.GetConnectionString("UsersDb")
+           ));
 
         return services;
     }

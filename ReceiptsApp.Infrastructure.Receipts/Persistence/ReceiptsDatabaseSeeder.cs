@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using ReceiptsApp.Domain.Entities;
-using ReceiptsApp.Infrastructure.Receipts.Persistence;
 
 namespace ReceiptsApp.Infrastructure.Receipts.Persistence;
 
@@ -23,7 +22,7 @@ public class ReceiptsDatabaseSeeder
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
-        if (_dbContext.Markets.Any())
+        if (_dbContext != null && _dbContext.Markets.Any())
         {
             _logger.LogInformation("Markets already seeded — skipping.");
             return;

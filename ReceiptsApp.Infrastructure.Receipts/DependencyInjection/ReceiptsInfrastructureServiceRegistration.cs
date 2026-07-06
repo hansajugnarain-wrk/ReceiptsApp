@@ -20,17 +20,7 @@ public static class ReceiptsInfrastructureServiceRegistration
     public static IServiceCollection AddReceiptsInfrastructure(
         this IServiceCollection services, IConfiguration configuration)
     {
-        // Points at the Docker SQL Server container — see docker-compose.yml
-        // at the solution root and the "ReceiptsDatabase" connection string
-        // in appsettings.json / appsettings.Development.json.
-        services.AddDbContext<ReceiptsDbContext>(options =>
-            options.UseSqlServer(
-                configuration.GetConnectionString("ReceiptsDatabase"),
-                sql =>
-                {
-                    sql.EnableRetryOnFailure(maxRetryCount: 3);
-                    sql.MigrationsAssembly(typeof(ReceiptsDbContext).Assembly.FullName);
-                }));
+        
 
         // Register the concrete SQL repository first under its own type,
         // then wrap it with the caching decorator behind the interface that
@@ -48,7 +38,10 @@ public static class ReceiptsInfrastructureServiceRegistration
 
         services.AddScoped<IMarketRepository, SqlMarketRepository>();
         services.AddScoped<ReceiptsDatabaseSeeder>();
-
+        services.AddDbContextFactory<ReceiptsDbContext>(options =>
+            options.UseSqlServer(
+                configuration.GetConnectionString("ReceiptsDb")
+            ));
         return services;
     }
 }
