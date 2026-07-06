@@ -11,8 +11,8 @@ using ReceiptsApp.Infrastructure.Receipts.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Aspire configuration - disabled for Docker build
-// builder.AddServiceDefaults();
+//Aspire configuration 
+ builder.AddServiceDefaults();
 
 // ── Logging ──────────────────────────────────────────────────────────────
 // Replace the default console provider with log4net, configured by an
@@ -44,9 +44,6 @@ builder.Services.AddHealthChecks()
 
 var app = builder.Build();
 
-// ── Database migration on startup (dev convenience) ───────────────────────
-// In production, run `dotnet ef database update` per context as a deploy
-// step instead of migrating automatically on boot.
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
@@ -58,8 +55,7 @@ if (app.Environment.IsDevelopment())
     }
     catch (SqlException ex)
     {
-        logger.LogError(ex, "Database migration failed - SQL connectivity issue. Connection string (no password): {Conn}",
-            builder.Configuration.GetConnectionString("UsersDb"));
+        logger.LogError(ex, "Database migration failed - SQL connectivity issue.");
     }
 
     var receiptsDb = scope.ServiceProvider.GetRequiredService<ReceiptsDbContext>();
@@ -77,12 +73,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Aspire configuration - disabled for Docker build
-// app.MapDefaultEndpoints();
+// Aspire configuration
+ app.MapDefaultEndpoints();
 
 app.MapControllers();
 app.MapHealthChecks("/health");

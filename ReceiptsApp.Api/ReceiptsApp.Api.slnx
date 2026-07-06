@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="../aspire/AppHost/Receipts.AppHost.csproj" />
+  <Project Path="../aspire/ServiceDefaults/Receipts.ServiceDefaults.csproj" />
   <Project Path="../ReceiptsApp.Application/ReceiptsApp.Application.csproj" />
   <Project Path="../ReceiptsApp.Domain/ReceiptsApp.Domain.csproj" />
   <Project Path="../ReceiptsApp.Infrastructure.Receipts/ReceiptsApp.Infrastructure.Receipts.csproj" />

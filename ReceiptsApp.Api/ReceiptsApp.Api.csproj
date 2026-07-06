@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <!-- ServiceDefaults removed for Docker build -->
+    <ProjectReference Include="..\aspire\ServiceDefaults\Receipts.ServiceDefaults.csproj" />
     <ProjectReference Include="..\ReceiptsApp.Application\ReceiptsApp.Application.csproj" />
     <ProjectReference Include="..\ReceiptsApp.Infrastructure\ReceiptsApp.Infrastructure.csproj" />
     <ProjectReference Include="..\ReceiptsApp.Infrastructure.Receipts\ReceiptsApp.Infrastructure.Receipts.csproj" />
